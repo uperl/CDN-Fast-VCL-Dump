@@ -2,3 +2,13 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
   - initial version
+  - dump() writes a Fastly service version (custom VCL, snippets,
+    dictionaries, ACLs) to a directory of .vcl and .yml files plus an
+    index.yml manifest, using symbolic id references rather than literal
+    API ids
+  - load() uploads such a directory into an unrelated service version and
+    returns the resolved id mapping
+  - new() accepts fastly_cli / fastly_profile / fastly_config options to
+    read the API token (and endpoint) from the Fastly CLI's config.toml,
+    located per-platform the same way the CLI locates it
+  - added the cfvd command (App::cfvd) with dump and load subcommands

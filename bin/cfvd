@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use App::cfvd ();
+
+exit App::cfvd->run( [@ARGV] );
+
+# PODNAME: cfvd
+# ABSTRACT: command line interface to CDN::Fast::VCL::Dump
+
+__END__
+
+=head1 SYNOPSIS
+
+ cfvd dump --service <service-id> [--version <n>] <directory>
+ cfvd load --service <service-id> --version <n>  <directory>
+ cfvd --help
+
+=head1 DESCRIPTION
+
+C<cfvd> dumps a Fastly VCL service version to a directory of plain files and
+loads such a directory back into another service version -- possibly on a
+different service, version, or customer account.
+
+See L<App::cfvd> for the full list of options and authentication methods, and
+L<CDN::Fast::VCL::Dump> for exactly what a dump contains.
+
+=head1 SEE ALSO
+
+L<App::cfvd>, L<CDN::Fast::VCL::Dump>
+
+=cut
