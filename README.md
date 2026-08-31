@@ -9,6 +9,10 @@ use CDN::Fast::VCL::Dump;
 
 my $tool = CDN::Fast::VCL::Dump->new( api_key => $ENV{FASTLY_API_TOKEN} );
 
+# ...or reuse the credentials of the Fastly CLI (~/.config/fastly/config.toml):
+
+my $tool = CDN::Fast::VCL::Dump->new( fastly_cli => 1 );
+
 # dump a service + version to a directory of files
 $tool->dump(
   service_id => 'SU1Z0isxPaozGVKXdv0eY',
@@ -97,14 +101,53 @@ Options:
     `get_api`).  When given, `api_key` and `base_url` are ignored.
 
 - api\_key
+- token
 
     A Fastly API token.  Used to build a [WebService::Fastly::ApiFactory](https://metacpan.org/pod/WebService::Fastly::ApiFactory) if `api`
     is not supplied.
 
+- fastly\_cli
+
+    If true, and neither `api` nor `api_key` was given, read the API token (and
+    the API endpoint) from the config file maintained by the
+    [Fastly CLI](https://www.fastly.com/documentation/reference/cli/) -- the same
+    `config.toml` that `fastly profile` commands write.  See
+    ["fastly\_cli\_config\_file"](#fastly_cli_config_file) for how its location is determined per platform.
+
+- fastly\_profile
+
+    Name of the profile to read from that config file.  Implies `fastly_cli => 1`.
+    When omitted, the profile marked `default` is used (or the only profile, if
+    there is exactly one).
+
+- fastly\_config
+
+    Path to a specific `config.toml` to read instead of the platform default.
+    Implies `fastly_cli => 1`.
+
 - base\_url
 
     Optional API base URL override, passed through to
-    [WebService::Fastly::Configuration](https://metacpan.org/pod/WebService::Fastly::Configuration).
+    [WebService::Fastly::Configuration](https://metacpan.org/pod/WebService::Fastly::Configuration).  Takes precedence over an endpoint found
+    in the Fastly CLI config.
+
+## fastly\_cli\_config\_file
+
+```perl
+my $path = CDN::Fast::VCL::Dump->fastly_cli_config_file;
+```
+
+Returns the [Path::Tiny](https://metacpan.org/pod/Path::Tiny) location of the `config.toml` used by the
+[Fastly CLI](https://www.fastly.com/documentation/reference/cli/), following the
+same platform rules the CLI itself uses:
+
+- `$XDG_CONFIG_HOME/fastly/config.toml`, or `~/.config/fastly/config.toml`, on
+most Unix systems;
+- `~/Library/Application Support/fastly/config.toml` on macOS;
+- `%APPDATA%\fastly\config.toml` on Windows;
+- falling back to `~/.fastly/config.toml`.
+
+Returns `undef` if none of those paths exists.
 
 # METHODS
 
@@ -156,8 +199,15 @@ snippet are not captured by ["dump"](#dump) and so are not reproduced here.
 
 # SEE ALSO
 
+- [cfvd](https://metacpan.org/pod/cfvd)
+
+    A command line interface to this module.
+
 - [WebService::Fastly](https://metacpan.org/pod/WebService::Fastly)
 - [https://www.fastly.com/documentation/reference/api/](https://www.fastly.com/documentation/reference/api/)
+- [https://www.fastly.com/documentation/reference/cli/](https://www.fastly.com/documentation/reference/cli/)
+
+    The Fastly CLI, whose `config.toml` the `fastly_cli` option reads.
 
 # AUTHOR
 
